@@ -1,175 +1,89 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   User,
-  GraduationCap,
-  Code,
-  Heart,
-  Target,
-  Lightbulb,
-  Globe,
-  Coffee,
-  Award,
-  Briefcase,
-  Star,
-  TrendingUp,
   Download,
   Mail,
   Linkedin,
   Github,
-  MapPin,
-  Calendar,
-  Clock,
+  Languages,
 } from "lucide-react";
+import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/data/translations";
+import {
+  personalInfoData,
+  expertiseData,
+  achievementsData,
+  timelineData,
+  hobbiesData,
+  statsData,
+} from "@/data/about";
 
 export default function AboutPage() {
-  const personalInfo = [
-    {
-      title: "Pendidikan",
-      description:
-        "Mahasiswa S1 Teknik Informatika dengan IPK 3.7+ dan pengalaman dalam pengembangan software profesional.",
-      icon: <GraduationCap className="w-6 h-6" />,
-      details:
-        "Fokus pada Software Engineering, Web Development, dan Data Structures & Algorithms. Aktif dalam berbagai organisasi dan kompetisi programming.",
-      stats: "IPK 3.7+ | Semester 6",
-    },
-    {
-      title: "Skills & Expertise",
-      description:
-        "Full-stack developer dengan kemampuan dalam modern web technologies dan best practices.",
-      icon: <Code className="w-6 h-6" />,
-      details:
-        "React.js, Next.js, Node.js, Express, MongoDB, PostgreSQL, Tailwind CSS, Git, Docker, dan REST API development.",
-      stats: "10+ Technologies",
-    },
-    {
-      title: "Professional Goals",
-      description:
-        "Mencari kesempatan sebagai Software Developer untuk berkontribusi dalam tim yang inovatif.",
-      icon: <Target className="w-6 h-6" />,
-      details:
-        "Berdedikasi untuk menulis clean code, mengikuti best practices, dan terus belajar teknologi terbaru untuk memberikan solusi terbaik.",
-      stats: "Career Ready",
-    },
-    {
-      title: "Work Philosophy",
-      description:
-        "Percaya pada kolaborasi tim, continuous learning, dan code quality untuk menciptakan produk yang excellent.",
-      icon: <Lightbulb className="w-6 h-6" />,
-      details:
-        "Menerapkan Agile methodology, code review, testing, dan dokumentasi yang baik dalam setiap project.",
-      stats: "Team Player",
-    },
+  const { language } = useLanguage();
+  const t = translations[language];
+
+  // Localized personal info
+  const personalInfo = useMemo(() => 
+    personalInfoData.map(item => ({
+      ...item,
+      ...t.about.personalInfo[item.id]
+    })), [language, t.about.personalInfo]);
+
+  // Localized expertise
+  const expertise = useMemo(() => 
+    expertiseData.map(item => ({
+      ...item,
+      title: t.about.expertise[item.id]
+    })), [language, t.about.expertise]);
+
+  // Localized achievements
+  const achievements = useMemo(() => 
+    achievementsData.map(item => ({
+      ...item,
+      ...t.about.achievements[item.id]
+    })), [language, t.about.achievements]);
+
+  // Localized timeline
+  const timeline = useMemo(() => 
+    timelineData.map(item => ({
+      ...item,
+      ...t.about.timeline[item.id]
+    })), [language, t.about.timeline]);
+
+  // Localized soft skills
+  const softSkills = t.about.softSkills.skills;
+
+  // Localized languages
+  const languagesData = [
+    { name: t.about.languages.indonesian, level: t.about.languages.native, proficiency: 100 },
+    { name: t.about.languages.english, level: t.about.languages.professional, proficiency: 85 },
   ];
 
-  const expertise = [
-    {
-      title: "Frontend Development",
-      description: "React, Next.js, Vue.js, Tailwind CSS",
-      icon: <Code className="w-6 h-6" />,
-      level: 60,
-    },
-    {
-      title: "Backend Development",
-      description: "Node.js, Express, REST API, GraphQL",
-      icon: <Globe className="w-6 h-6" />,
-      level: 55,
-    },
-    {
-      title: "Database Management",
-      description: "MongoDB, PostgreSQL, MySQL, Redis",
-      icon: <Award className="w-6 h-6" />,
-      level: 50,
-    },
-    {
-      title: "Mobile Development",
-      description: "React Native, Flutter, Responsive Design",
-      icon: <Briefcase className="w-6 h-6" />,
-      level: 45,
-    },
-  ];
+  // Localized hobbies
+  const hobbies = useMemo(() => 
+    hobbiesData.map(item => ({
+      ...item,
+      ...t.about.hobbies[item.id]
+    })), [language, t.about.hobbies]);
 
-  const achievements = [
-    {
-      title: "5+ Projects Completed",
-      description: "Successfully delivered various web and mobile applications",
-      icon: <Star className="w-5 h-5" />,
-    },
-    {
-      title: "100+ GitHub Contributions",
-      description: "Active contributor in open source community",
-      icon: <Github className="w-5 h-5" />,
-    },
-    {
-      title: "Fast Learner",
-      description: "Quickly adapt to new technologies and frameworks",
-      icon: <TrendingUp className="w-5 h-5" />,
-    },
-    {
-      title: "Team Collaboration",
-      description: "Experienced in working with cross-functional teams",
-      icon: <Heart className="w-5 h-5" />,
-    },
-  ];
-
-  const timeline = [
-    {
-      year: "2022",
-      title: "Memulai Journey Programming",
-      description:
-        "Belajar fundamental programming dengan C++, Python, dan JavaScript. Membangun project pertama berupa website sederhana.",
-      highlight: "Foundation Building",
-    },
-    {
-      year: "2023",
-      title: "Full-Stack Development Mastery",
-      description:
-        "Mendalami MERN Stack (MongoDB, Express, React, Node.js) dan membangun beberapa full-stack applications dengan fitur kompleks.",
-      highlight: "Professional Growth",
-    },
-    {
-      year: "2024",
-      title: "Advanced Topics & Real Projects",
-      description:
-        "Mempelajari Docker, CI/CD, testing, dan system design. Mengerjakan project nyata untuk klien dan berkontribusi dalam open source.",
-      highlight: "Industry Ready",
-    },
-    {
-      year: "2025",
-      title: "Seeking Opportunities",
-      description:
-        "Siap untuk bergabung dengan tim profesional dan berkontribusi dalam pengembangan produk software berkualitas tinggi.",
-      highlight: "Career Launch",
-    },
-  ];
-
-  const softSkills = [
-    "Problem Solving",
-    "Critical Thinking",
-    "Team Collaboration",
-    "Communication",
-    "Time Management",
-    "Adaptability",
-    "Attention to Detail",
-    "Self-Learning",
-  ];
-
-  const stats = [
-    { label: "Projects Completed", value: "15+" },
-    { label: "Technologies Mastered", value: "20+" },
-    { label: "Coding Hours", value: "2000+" },
-    { label: "Coffee Cups", value: "∞" },
-  ];
+  // Localized stats titles
+  const stats = useMemo(() => 
+    statsData.map(item => ({
+      ...item,
+      label: t.about.stats[item.id]
+    })), [language, t.about.stats]);
 
   // Typewriter for role headline
-  const fullRole = "Full-Stack Developer";
   const [roleText, setRoleText] = useState("");
   const [caretVisible, setCaretVisible] = useState(true);
   const typeIndexRef = useRef(0);
 
   useEffect(() => {
+    const fullRole = language === "en" ? "Full-Stack Developer" : "Full-Stack Developer";
     const typingInterval = setInterval(() => {
       const index = typeIndexRef.current;
       if (index <= fullRole.length) {
@@ -180,7 +94,7 @@ export default function AboutPage() {
       }
     }, 60);
     return () => clearInterval(typingInterval);
-  }, []);
+  }, [language]);
 
   useEffect(() => {
     const caretInterval = setInterval(() => setCaretVisible((v) => !v), 500);
@@ -253,67 +167,75 @@ export default function AboutPage() {
   }, [animateStats, stats]);
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <section className="min-h-screen relative overflow-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-400/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-6 py-12 max-w-7xl relative z-10">
-        {/* Enhanced Header Section */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-full text-blue-300 text-sm font-medium mb-6 border border-blue-500/30 backdrop-blur-sm">
-            <Award className="w-4 h-4" />
-            <span> Available for Hire </span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-6 leading-tight">
-            Tentang Saya
-          </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10">
-            Seorang{" "}
-            <span className="text-blue-400 font-semibold relative inline-block">
-              {roleText}
-              <span className={`ml-1 inline-block w-[2px] h-6 bg-blue-400 align-middle ${caretVisible ? "opacity-100" : "opacity-0"}`}></span>
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-            </span>{" "}
-            passionate yang berfokus pada pembuatan aplikasi web dan mobile
-            dengan performa tinggi dan user experience yang excellent. Siap
-            berkontribusi dalam tim development profesional.
-          </p>
-          
-          {/* Stats Counter */}
-          <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mb-10">
-            {stats.map((stat, index) => (
-              <div 
-                key={index}
-                className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 text-center group hover:border-blue-500/30 transition-all duration-300"
-              >
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-                  {(() => {
-                    const raw = String(stat.value);
-                    const numeric = parseInt(raw.replace(/[^0-9]/g, ""));
-                    const hasPlus = raw.includes("+");
-                    if (Number.isNaN(numeric)) return raw;
-                    const val = counterValues[index] || 0;
-                    return `${val}${hasPlus ? "+" : ""}`;
-                  })()}
+        {/* Premium Split Header Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
+          <div className="order-2 lg:order-1 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-full text-cyan-300 text-sm font-bold mb-6 border border-cyan-500/30 backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+              {t.about.availableForHire}
+            </div>
+            <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent mb-6 leading-tight drop-shadow-sm">
+              {t.about.title}
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+              {t.about.desc1}{" "}
+              <span className="text-blue-400 font-semibold relative inline-block">
+                {roleText}
+                <span className={`ml-1 inline-block w-[2px] h-6 bg-blue-400 align-middle ${caretVisible ? "opacity-100" : "opacity-0"}`}></span>
+              </span>{" "}
+              {t.about.desc2}
+            </p>
+            
+            {/* Stats Counter */}
+            <div ref={statsRef} className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+              {stats.map((stat, index) => (
+                <div 
+                  key={index}
+                  className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-center group hover:border-cyan-500/50 hover:bg-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)]"
+                >
+                  <div className="text-2xl font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">
+                    {(() => {
+                      const raw = String(stat.value);
+                      const numeric = parseInt(raw.replace(/[^0-9]/g, ""));
+                      const hasPlus = raw.includes("+");
+                      if (Number.isNaN(numeric)) return raw;
+                      const val = counterValues[index] || 0;
+                      return `${val}${hasPlus ? "+" : ""}`;
+                    })()}
+                  </div>
+                  <div className="text-gray-400 text-xs md:text-sm font-medium">{stat.label}</div>
                 </div>
-                <div className="text-gray-400 text-sm">{stat.label}</div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+              <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-white font-bold hover:from-cyan-500 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)]">
+                <Download className="w-5 h-5" />
+                <span> {t.about.downloadCv} </span>
+              </button>
+              <button as="a" href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-white/5 backdrop-blur-md rounded-xl text-white font-bold border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-300 transform hover:scale-105">
+                <Mail className="w-5 h-5" />
+                <span> {t.about.contactMe} </span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4">
-            <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40">
-              <Download className="w-5 h-5" />
-              <span> Download CV </span>
-            </button>
-            <button className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm rounded-xl text-white font-semibold border border-white/20 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105">
-              <Mail className="w-5 h-5" />
-              <span> Contact Me </span>
-            </button>
+          <div className="order-1 lg:order-2 flex justify-center items-center relative">
+            <div className="relative w-72 h-72 md:w-96 md:h-96">
+              <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-purple-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+              <div className="absolute inset-4 bg-gray-900/80 rounded-full border border-white/20 backdrop-blur-xl flex items-center justify-center overflow-hidden z-10 shadow-[0_0_40px_rgba(6,182,212,0.3)] group">
+                <User className="w-32 h-32 text-gray-600 group-hover:text-cyan-400 transition-colors duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -343,7 +265,7 @@ export default function AboutPage() {
                     </span>
                   </div>
                   <p className="text-gray-300 text-base leading-relaxed mb-4">
-                    {info.description}
+                    {info.desc}
                   </p>
                   <p className="text-gray-400 text-sm leading-relaxed border-l-2 border-purple-500/50 pl-4">
                     {info.details}
@@ -359,10 +281,10 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4 inline-flex items-center justify-center gap-3">
               <span className="w-3 h-10 bg-gradient-to-b from-blue-500 to-purple-600 rounded"></span>
-              Technical Expertise
+              {t.about.expertise.title}
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Pengalaman dan kemampuan teknis yang terus dikembangkan melalui project nyata dan continuous learning
+              {t.about.expertise.desc}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -390,7 +312,7 @@ export default function AboutPage() {
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-300">Proficiency</span>
+                    <span className="text-sm text-gray-300">{language === "en" ? "Proficiency" : "Kemampuan"}</span>
                     <span className="text-sm font-semibold text-white">
                       {animateBars ? `${skill.level}%` : "0%"}
                     </span>
@@ -415,7 +337,7 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4 inline-flex items-center justify-center gap-3">
               <span className="w-3 h-10 bg-gradient-to-b from-blue-500 to-purple-600 rounded"></span>
-              Achievements & Highlights
+              {t.about.achievements.title}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -433,7 +355,7 @@ export default function AboutPage() {
                     {achievement.title}
                   </h3>
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    {achievement.description}
+                    {achievement.desc}
                   </p>
                 </div>
               </div>
@@ -446,7 +368,7 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4 inline-flex items-center justify-center gap-3">
               <span className="w-3 h-10 bg-gradient-to-b from-blue-500 to-purple-600 rounded"></span>
-              Professional Journey
+              {t.about.timeline.title}
             </h2>
           </div>
           <div className="relative max-w-5xl mx-auto">
@@ -478,7 +400,7 @@ export default function AboutPage() {
                         {item.title}
                       </h3>
                       <p className="text-gray-300 text-base leading-relaxed">
-                        {item.description}
+                        {item.desc}
                       </p>
                     </div>
                   </div>
@@ -491,24 +413,77 @@ export default function AboutPage() {
         </div>
 
         {/* Enhanced Soft Skills Section */}
-        <div className="mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24">
+          <div>
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-white mb-4 inline-flex items-center gap-3">
+                <span className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded"></span>
+                {t.about.softSkills.title}
+              </h2>
+              <p className="text-gray-400 text-sm">{t.about.softSkills.desc}</p>
+            </div>
+            <div className="flex flex-wrap gap-4">
+              {softSkills.map((skill, index) => (
+                <div
+                  key={index}
+                  className="px-5 py-3 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 hover:border-cyan-500/50 text-gray-300 hover:text-white transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] cursor-default group relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative z-10 font-medium text-sm">{skill}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+             <div className="mb-10">
+              <h2 className="text-3xl font-bold text-white mb-4 inline-flex items-center gap-3">
+                <Languages className="text-cyan-400 w-8 h-8" />
+                {t.about.languages.title}
+              </h2>
+              <p className="text-gray-400 text-sm">{t.about.languages.desc}</p>
+            </div>
+            <div className="space-y-6">
+              {languagesData.map((lang, index) => (
+                <div key={index} className="bg-white/5 rounded-2xl p-5 border border-white/10 hover:border-cyan-500/30 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-white">{lang.name}</span>
+                    <span className="text-xs px-2 py-1 bg-cyan-500/20 text-cyan-300 rounded-lg">{lang.level}</span>
+                  </div>
+                  <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                      style={{ width: `${lang.proficiency}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Hobbies Section */}
+        <div className="mb-24">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4 inline-flex items-center justify-center gap-3">
               <span className="w-3 h-10 bg-gradient-to-b from-blue-500 to-purple-600 rounded"></span>
-              Soft Skills
+              {t.about.hobbies.title}
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Kemampuan interpersonal yang mendukung kolaborasi efektif dan pengembangan profesional
+              {t.about.hobbies.desc}
             </p>
           </div>
-          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-            {softSkills.map((skill, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {hobbies.map((hobby, index) => (
               <div
                 key={index}
-                className="px-6 py-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 hover:border-purple-500/50 text-gray-300 hover:text-white transition-all duration-300 hover:transform hover:scale-110 cursor-default group relative overflow-hidden"
+                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-pink-500/50 transition-all duration-300 hover:-translate-y-2 group text-center"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10 font-medium">{skill}</span>
+                <div className="inline-flex p-4 bg-white/5 rounded-2xl text-cyan-400 mb-4 group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-pink-500 group-hover:to-purple-600 group-hover:text-white transition-all duration-300 shadow-lg">
+                  {hobby.icon}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">{hobby.name}</h3>
+                <p className="text-sm text-gray-400">{hobby.desc}</p>
               </div>
             ))}
           </div>
@@ -521,26 +496,24 @@ export default function AboutPage() {
             <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
             <div className="relative z-10">
               <h3 className="text-3xl font-bold text-white mb-6">
-                Mari Berkolaborasi!
+                {t.about.cta}
               </h3>
               <p className="text-gray-300 mb-8 text-lg max-w-2xl mx-auto leading-relaxed">
-                Saya terbuka untuk peluang kerja full-time, freelance, atau
-                kolaborasi project. Mari diskusikan bagaimana saya dapat
-                berkontribusi dalam tim Anda!
+                {t.about.ctaDesc}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-blue-500/50 hover:shadow-blue-500/40">
                   <Mail className="w-5 h-5" />
-                  <span> Email Me </span>
+                  <span> {t.about.emailMe} </span>
                 </button>
-                <button as="a" href="https://linkedin.com/in/ariekaprianda" target="_blank" rel="noopener noreferrer nofollow" aria-label="LinkedIn Ari Eka Prianda" className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm rounded-xl text-white font-semibold border border-white/20 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105">
+                <a href="https://linkedin.com/in/ariekaprianda" target="_blank" rel="noopener noreferrer nofollow" aria-label="LinkedIn Ari Eka Prianda" className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm rounded-xl text-white font-semibold border border-white/20 hover:border-blue-500/50 transition-all duration-300 transform hover:scale-105">
                   <Linkedin className="w-5 h-5" />
                   <span> LinkedIn </span>
-                </button>
-                <button className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm rounded-xl text-white font-semibold border border-white/20 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
+                </a>
+                <a href="https://github.com/ariekakagerou" target="_blank" rel="noopener noreferrer nofollow" aria-label="GitHub Ari Eka Prianda" className="inline-flex items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm rounded-xl text-white font-semibold border border-white/20 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105">
                   <Github className="w-5 h-5" />
                   <span> GitHub </span>
-                </button>
+                </a>
               </div>
             </div>
           </div>

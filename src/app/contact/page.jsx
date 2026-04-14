@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Mail,
   Phone,
   MapPin,
   Github,
@@ -15,8 +14,14 @@ import {
   Star,
   Heart,
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/data/translations";
+import { contactMethodsData, responseTimeData } from "@/data/contact";
 
 export default function ContactPage() {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [touched, setTouched] = useState({ name: false, email: false, message: false });
   const [status, setStatus] = useState(null);
@@ -27,112 +32,103 @@ export default function ContactPage() {
 
   const errors = useMemo(() => {
     const e = {};
-    if (!form.name.trim()) e.name = "Nama wajib diisi";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Email tidak valid";
-    if (!form.message.trim()) e.message = "Pesan wajib diisi";
+    if (!form.name.trim()) e.name = t.contact.validation.nameRequired;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = t.contact.validation.emailInvalid;
+    if (!form.message.trim()) e.message = t.contact.validation.messageRequired;
     return e;
-  }, [form]);
+  }, [form, t.contact.validation]);
 
   useEffect(() => {
     if (!status || status.type !== "error") return;
     if (formRef.current) {
       formRef.current.classList.remove("animate-shake");
-      // force reflow to restart animation
       void formRef.current.offsetWidth;
       formRef.current.classList.add("animate-shake");
     }
   }, [status]);
-  const contactMethods = [
-    {
-      title: "Email",
-      value: "your.email@example.com",
-      icon: <Mail />,
-      description: "Respon dalam 24 jam",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      title: "Phone",
-      value: "+62 812-3456-7890",
-      icon: <Phone />,
-      description: "Senin - Jumat, 9:00 - 17:00",
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      title: "Location",
-      value: "Jakarta, Indonesia",
-      icon: <MapPin />,
-      description: "Available for meetings",
-      color: "from-purple-500 to-pink-500",
-    },
-  ];
+
+  const contactMethods = useMemo(() => 
+    contactMethodsData.map(method => ({
+      ...method,
+      title: t.contact.methods[method.id].title,
+      description: t.contact.methods[method.id].desc,
+    })), [language, t.contact.methods]);
 
   const socialLinks = [
     {
       name: "GitHub",
-      url: "https://github.com/yourusername",
+      url: "https://github.com/ariekakagerou",
       icon: <Github />,
       color: "hover:from-gray-600 hover:to-gray-800",
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/in/yourusername",
+      url: "https://linkedin.com/in/ari-eka-prianda-78714232a",
       icon: <Linkedin />,
       color: "hover:from-blue-600 hover:to-blue-800",
     },
     {
       name: "Instagram",
-      url: "https://instagram.com/yourusername",
+      url: "https://instagram.com/USERNAME",
       icon: <Instagram />,
       color: "hover:from-pink-500 hover:to-purple-600",
     },
   ];
 
-  const responseTime = [
-    { type: "General Inquiry", time: "24 hours", icon: <Clock /> },
-    { type: "Project Discussion", time: "12 hours", icon: <MessageCircle /> },
-    { type: "Urgent Matter", time: "2-4 hours", icon: <Send /> },
-  ];
+  const responseTime = useMemo(() => 
+    responseTimeData.map(item => ({
+      ...item,
+      type: t.contact.responseTime[item.id].type,
+      time: t.contact.responseTime[item.id].time,
+    })), [language, t.contact.responseTime]);
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="container mx-auto px-6 py-12">
-        {" "}
-        {/* Header Section */}{" "}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-6">
-            Hubungi Saya{" "}
-          </h1>{" "}
+    <section className="min-h-screen relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="container mx-auto px-6 py-12 max-w-7xl relative z-10">
+        {/* Header Section */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-full text-cyan-300 text-sm font-bold mb-6 border border-cyan-500/30 backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            <MessageCircle className="w-4 h-4" />
+            <span> {t.contact.connectLabel} </span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent mb-6 leading-tight drop-shadow-sm">
+            {t.contact.title}
+          </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Tertarik untuk bekerja sama atau ingin berdiskusi tentang project ?
-            Saya selalu senang mendengar ide - ide baru dan kesempatan
-            kolaborasi yang menarik.{" "}
-          </p>{" "}
-        </div>{" "}
+            {t.contact.desc}
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {" "}
-          {/* Contact Form */}{" "}
-          <div ref={formRef} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-              <MessageCircle className="w-6 h-6 mr-3 text-blue-400" />
-              Kirim Pesan{" "}
-            </h2>{" "}
+          {/* Contact Form */}
+          <div ref={formRef} className="bg-white/5 backdrop-blur-md rounded-3xl p-8 md:p-10 border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.3)] relative overflow-hidden">
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl"></div>
+            <h2 className="text-3xl font-bold text-white mb-8 flex items-center relative z-10">
+              <span className="w-2 h-8 bg-gradient-to-b from-cyan-500 to-blue-600 rounded mr-4"></span>
+              {t.contact.sendMessage}
+            </h2>
             <form
-              className="space-y-6"
+              className="space-y-6 relative z-10"
               onSubmit={(e) => {
                 e.preventDefault();
                 setStatus(null);
                 setTouched({ name: true, email: true, message: true });
                 if (Object.keys(errors).length > 0) {
-                  setStatus({ type: "error", msg: "Periksa kembali input yang wajib diisi." });
+                  setStatus({ type: "error", msg: t.contact.validation.checkInput });
                   return;
                 }
                 setSubmitting(true);
-                // Simulasi submit + efek sukses
                 setTimeout(() => {
                   setSubmitting(false);
                   setSuccess(true);
-                  setStatus({ type: "success", msg: "Pesan siap dikirim via email." });
-                  // Launch confetti elements briefly
+                  setStatus({ type: "success", msg: t.contact.successDesc });
                   if (confettiRef.current) {
                     const container = confettiRef.current;
                     container.innerHTML = "";
@@ -147,7 +143,7 @@ export default function ContactPage() {
                     }
                     setTimeout(() => (container.innerHTML = ""), 2200);
                   }
-                  const mailto = `mailto:${"your.email@example.com"}?subject=${encodeURIComponent(
+                  const mailto = `mailto:ariekaprianda@gmail.com?subject=${encodeURIComponent(
                     form.subject || `Pesan dari ${form.name}`
                   )}&body=${encodeURIComponent(
                     `Nama: ${form.name}\nEmail: ${form.email}\n\n${form.message}`
@@ -155,7 +151,7 @@ export default function ContactPage() {
                   window.location.href = mailto;
                   setForm({ name: "", email: "", subject: "", message: "" });
                   setTouched({ name: false, email: false, message: false });
-                  setTimeout(() => setSuccess(false), 1400);
+                  setTimeout(() => setSuccess(false), 3000);
                 }, 500);
               }}
             >
@@ -163,52 +159,52 @@ export default function ContactPage() {
                 <div>
                   <input
                     type="text"
-                    placeholder="Nama Lengkap"
+                    placeholder={t.contact.nameLabel}
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     onBlur={() => setTouched({ ...touched, name: true })}
-                    className="w-full p-4 rounded-lg bg-gray-800/50 text-white border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full p-4 rounded-xl bg-white/5 backdrop-blur-sm text-white border border-white/10 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] focus:outline-none transition-all duration-300"
                   />
                   {touched.name && errors.name && (
                     <p className="mt-1 text-sm text-red-400">{errors.name}</p>
                   )}
-                </div>{" "}
+                </div>
                 <div>
                   <input
                     type="email"
-                    placeholder="Email Address"
+                    placeholder={t.contact.emailLabel}
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     onBlur={() => setTouched({ ...touched, email: true })}
-                    className="w-full p-4 rounded-lg bg-gray-800/50 text-white border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                    className="w-full p-4 rounded-xl bg-white/5 backdrop-blur-sm text-white border border-white/10 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] focus:outline-none transition-all duration-300"
                   />
                   {touched.email && errors.email && (
                     <p className="mt-1 text-sm text-red-400">{errors.email}</p>
                   )}
-                </div>{" "}
-              </div>{" "}
+                </div>
+              </div>
               <div>
                 <input
                   type="text"
-                  placeholder="Subject"
+                  placeholder={t.contact.subjectLabel}
                   value={form.subject}
                   onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                  className="w-full p-4 rounded-lg bg-gray-800/50 text-white border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors"
+                  className="w-full p-4 rounded-xl bg-white/5 backdrop-blur-sm text-white border border-white/10 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] focus:outline-none transition-all duration-300"
                 />
-              </div>{" "}
+              </div>
               <div>
                 <textarea
-                  placeholder="Tulis pesan Anda di sini..."
+                  placeholder={t.contact.messagePlaceholder}
                   rows={6}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   onBlur={() => setTouched({ ...touched, message: true })}
-                  className="w-full p-4 rounded-lg bg-gray-800/50 text-white border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors resize-none"
+                  className="w-full p-4 rounded-xl bg-white/5 backdrop-blur-sm text-white border border-white/10 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.2)] focus:outline-none transition-all duration-300 resize-none"
                 />
                 {touched.message && errors.message && (
                   <p className="mt-1 text-sm text-red-400">{errors.message}</p>
                 )}
-              </div>{" "}
+              </div>
               {status && (
                 <div
                   className={`text-sm ${
@@ -219,143 +215,147 @@ export default function ContactPage() {
                 </div>
               )}
               <div className="relative">
-                <div ref={confettiRef} className="pointer-events-none absolute inset-0 overflow-hidden"></div>
+                <div ref={confettiRef} className="pointer-events-none absolute inset-0 overflow-hidden z-20"></div>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className={`w-full py-4 rounded-lg font-semibold text-white transition-all duration-300 transform flex items-center justify-center gap-2 ${
+                  className={`w-full py-4 rounded-xl font-bold tracking-wide text-white transition-all duration-300 transform flex items-center justify-center gap-2 ${
                     success
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105"
+                      ? "bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+                      : "bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:-translate-y-1"
                   } ${submitting ? "opacity-75" : ""}`}
                 >
                   {success ? (
                     <>
                       <CheckCircle className="w-5 h-5" />
-                      Terkirim
+                      {t.contact.sentStatus}
                     </>
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      Kirim Pesan
+                      {t.contact.sendButton}
                     </>
                   )}
                 </button>
-              </div>{" "}
-            </form>{" "}
-          </div>{" "}
-          {/* Contact Information */}{" "}
+              </div>
+            </form>
+          </div>
+
+          {/* Contact Information */}
           <div className="space-y-8">
-            {" "}
-            {/* Contact Methods */}{" "}
+            {/* Contact Methods */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-                <CheckCircle className="w-6 h-6 mr-3 text-green-400" />
-                Informasi Kontak{" "}
-              </h2>{" "}
+              <h2 className="text-3xl font-bold text-white mb-8 flex items-center">
+                <span className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded mr-4"></span>
+                {t.contact.infoTitle}
+              </h2>
               {contactMethods.map((method, index) => (
                 <div
                   key={index}
-                  className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105"
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-cyan-500/50 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-lg hover:shadow-cyan-500/25 group relative overflow-hidden"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative z-10 flex items-start gap-4">
                     <div
-                      className={`p-3 bg-gradient-to-br ${method.color} rounded-lg text-white`}
+                      className={`p-4 bg-gradient-to-br ${method.color} rounded-xl text-white group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-lg`}
                     >
-                      {" "}
-                      {method.icon}{" "}
-                    </div>{" "}
+                      {method.icon}
+                    </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-white mb-1">
-                        {" "}
-                        {method.title}{" "}
-                      </h3>{" "}
-                      <p className="text-blue-400 font-medium mb-1">
-                        {" "}
-                        {method.value}{" "}
-                      </p>{" "}
+                      <h3 className="text-lg font-bold text-white mb-1">
+                        {method.title}
+                      </h3>
+                      <p className="text-cyan-400 font-medium mb-1">
+                        {method.value}
+                      </p>
                       <p className="text-gray-400 text-sm">
-                        {" "}
-                        {method.description}{" "}
-                      </p>{" "}
-                    </div>{" "}
-                  </div>{" "}
-                </div>
-              ))}{" "}
-            </div>{" "}
-            {/* Response Time */}{" "}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-yellow-400" />
-                Waktu Respon{" "}
-              </h3>{" "}
-              <div className="space-y-3">
-                {" "}
-                {responseTime.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="text-gray-400"> {item.icon} </div>{" "}
-                      <span className="text-gray-300"> {item.type} </span>{" "}
-                    </div>{" "}
-                    <span className="text-blue-400 font-medium">
-                      {" "}
-                      {item.time}{" "}
-                    </span>{" "}
+                        {method.description}
+                      </p>
+                    </div>
                   </div>
-                ))}{" "}
-              </div>{" "}
-            </div>{" "}
-            {/* Social Links */}{" "}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-                <Star className="w-5 h-5 mr-2 text-yellow-400" />
-                Social Media{" "}
-              </h3>{" "}
-              <div className="flex gap-4">
-                {" "}
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    aria-label={`Media sosial ${social.name}`}
-                    className={`p-3 bg-gradient-to-br from-gray-700 to-gray-800 ${social.color} rounded-lg text-white transition-all duration-300 transform hover:scale-110`}
-                  >
-                    {" "}
-                    {social.icon}{" "}
-                  </a>
-                ))}{" "}
-              </div>{" "}
-            </div>{" "}
-          </div>{" "}
-        </div>{" "}
-        {/* Call to Action */}{" "}
-        <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-2xl p-8 border border-blue-500/30">
-            <h2 className="text-2xl font-bold text-white mb-4 flex items-center justify-center">
-              <Heart className="w-6 h-6 mr-2 text-red-400" />
-              Siap Memulai Project Bersama ?
-            </h2>{" "}
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Mari diskusikan ide project Anda dan bagaimana saya dapat membantu
-              mewujudkannya.Saya selalu excited untuk challenge baru dan
-              kolaborasi yang bermakna.{" "}
-            </p>{" "}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 py-3 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105">
-                Mulai Diskusi{" "}
-              </button>{" "}
-              <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-3 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105">
-                Lihat Portfolio{" "}
-              </button>{" "}
-            </div>{" "}
-          </div>{" "}
-        </div>{" "}
-      </div>{" "}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Response Time */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-500">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center">
+                  <Clock className="w-5 h-5 mr-3 text-cyan-400" />
+                  {t.contact.responseTime.title}
+                </h3>
+                <div className="space-y-4">
+                  {responseTime.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="text-gray-400">{item.icon}</div>
+                        <span className="text-gray-300 text-sm">{item.type}</span>
+                      </div>
+                      <span className="text-cyan-400 font-medium text-sm">
+                        {item.time}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Social Links */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-500">
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center">
+                  <Star className="w-5 h-5 mr-3 text-cyan-400" />
+                  Social Media
+                </h3>
+                <div className="flex flex-wrap gap-4">
+                  {socialLinks.map((social, index) => (
+                    <a
+                      key={index}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      aria-label={`Media sosial ${social.name}`}
+                      className={`p-4 bg-white/5 rounded-xl border border-white/10 text-white transition-all duration-300 transform hover:scale-110 hover:shadow-lg ${
+                        social.name === "GitHub" ? "hover:shadow-gray-500/50 hover:border-gray-500" :
+                        social.name === "LinkedIn" ? "hover:shadow-blue-500/50 hover:border-blue-500" :
+                        "hover:shadow-pink-500/50 hover:border-pink-500"
+                      }`}
+                    >
+                      {social.icon}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-20">
+          <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-3xl p-12 border border-white/20 max-w-4xl mx-auto relative overflow-hidden">
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
+            <div className="relative z-10">
+              <h2 className="text-3xl font-bold text-white mb-6 flex items-center justify-center">
+                <Heart className="w-6 h-6 mr-3 text-red-400" />
+                {t.contact.cta.title}
+              </h2>
+              <p className="text-gray-300 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
+                {t.contact.cta.desc}
+              </p>
+              <div className="flex flex-wrap flex-col sm:flex-row gap-4 justify-center">
+                <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-white font-bold hover:from-cyan-500 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)]">
+                  {t.contact.cta.buttonDiscuss}
+                </button>
+                <button className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm rounded-xl text-white font-bold border border-white/20 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-300 transform hover:scale-105">
+                  {t.contact.cta.buttonPortfolio}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

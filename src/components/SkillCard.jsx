@@ -28,7 +28,7 @@ const SkillCard = ({
       case 'advanced': return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
       case 'intermediate': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
       case 'beginner': return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
-      default: return 'bg-purple-500/20 text-purple-400 border-purple-500/50';
+      default: return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50';
     }
   };
 
@@ -36,10 +36,10 @@ const SkillCard = ({
     <div className="group relative">
       <div 
         className={`
-          bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 
-          hover:border-purple-500/50 transition-all duration-500 cursor-pointer
-          hover:transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20
-          ${isExpanded ? 'ring-2 ring-purple-500/50 border-purple-500/50' : ''}
+          bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 
+          hover:border-cyan-500/50 transition-all duration-500 cursor-pointer
+          hover:transform hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(6,182,212,0.2)]
+          ${isExpanded ? 'ring-2 ring-cyan-500/50 border-cyan-500/50 bg-gray-900/40' : ''}
         `}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -64,14 +64,14 @@ const SkillCard = ({
                 </span>
               </div>
               {category && (
-                <p className="text-xs text-purple-400 font-medium">{category}</p>
+                <p className="text-xs text-cyan-400 font-medium">{category}</p>
               )}
             </div>
           </div>
           
           {/* Quick Stats */}
           <div className="text-right">
-            <div className="text-2xl font-bold text-purple-400">{proficiency}%</div>
+            <div className="text-2xl font-bold text-cyan-400">{proficiency}%</div>
             <div className="text-xs text-gray-400">{projects} projects</div>
           </div>
         </div>
@@ -114,7 +114,7 @@ const SkillCard = ({
                 </span>
               ))}
               {!isExpanded && technologies.length > 3 && (
-                <span className="px-2 py-1 text-xs text-purple-400">
+                <span className="px-2 py-1 text-xs text-cyan-400">
                   +{technologies.length - 3} more
                 </span>
               )}
@@ -163,7 +163,7 @@ const SkillCard = ({
 
             {/* Action Button */}
             <div className="pt-2">
-              <button className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-[1.02]">
+              <button className="w-full py-2 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-sm font-medium rounded-lg hover:from-cyan-500 hover:to-blue-500 shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all duration-300 transform hover:scale-[1.02]">
                 View Projects & Examples
               </button>
             </div>
@@ -173,11 +173,11 @@ const SkillCard = ({
         {/* Expand Indicator */}
         <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className={`
-            w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center
-            transform transition-transform duration-300
+            w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center
+            transform transition-transform duration-300 shadow-[0_0_10px_rgba(6,182,212,0.5)]
             ${isExpanded ? 'rotate-180' : ''}
           `}>
-            <svg className="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3 h-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>

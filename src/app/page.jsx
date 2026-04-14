@@ -3,13 +3,23 @@
 import Hero from "@/components/Hero";
 import ProjectCard from "@/components/ProjectCard";
 import CertificateCard from "@/components/CertificateCard";
+import AutoCarousel from "@/components/AutoCarousel";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { projects } from "@/data/projects";
+import { caseStudies } from "@/data/caseStudies";
+import { certificates } from "@/data/certificates";
+import { technicalSkills, nonTechnicalSkills, programmingLanguages, frameworks, tools } from "@/data/skills";
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/data/translations";
 
 export default function Home() {
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = translations[language];
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,312 +42,39 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [aboutImages.length]);
 
-  // Projects data aligned with /projects page
-  const projects = [
-    {
-      title: "Authub (Frontend Flutter)",
-      description:
-        "Aplikasi mobile untuk autentikasi dan manajemen pengguna dengan Flutter.",
-      image: "/projects/authub-frontend.jpg",
-      technologies: ["Flutter", "Dart", "Firebase", "Material Design"],
-      category: "Mobile App",
-      githubLink: "https://github.com/username/authub-frontend",
-      status: "completed",
-      duration: "3 bulan",
-      teamSize: "3 developers",
-      highlights: [
-        "UI/UX yang responsif",
-        "Integrasi Firebase Auth",
-        "State management dengan Provider",
-      ],
-      challenges:
-        "Implementasi state management yang efisien dan integrasi dengan backend API.",
-      impact:
-        "Aplikasi berhasil meningkatkan user experience dengan performa yang optimal.",
-    },
-    {
-      title: "Authub (Backend Express)",
-      description:
-        "Backend API untuk sistem autentikasi dengan Express.js dan JWT.",
-      image: "/projects/authub-backend.jpg",
-      technologies: ["Express.js", "Node.js", "MSQL", "JWT", "Bcrypt"],
-      category: "Backend API",
-      githubLink: "https://github.com/username/authub-backend",
-      status: "completed",
-      duration: "2 bulan",
-      teamSize: "1 developer",
-      highlights: [
-        "RESTful API",
-        "JWT Authentication",
-        "MSQL Integration",
-        "Password Hashing",
-      ],
-      challenges:
-        "Implementasi security yang robust dan optimasi performa database.",
-      impact: "API yang aman dan scalable untuk mendukung aplikasi mobile.",
-    },
-    {
-      title: "Youth Trigger School Backend",
-      description:
-        "Backend sistem untuk platform edukasi pemuda dengan fitur lengkap.",
-      image: "/projects/youth-trigger.jpg",
-      technologies: ["Express.js", "Node.js", "MSQL", "Redis", "Socket.io"],
-      category: "Backend API",
-      githubLink: "https://github.com/username/youth-trigger-backend",
-      status: "completed",
-      duration: "4 bulan",
-      teamSize: "4 developers",
-      highlights: [
-        "Real-time messaging",
-        "File upload system",
-        "Database optimization",
-        "API documentation",
-      ],
-      challenges:
-        "Menangani real-time communication dan optimasi query database yang kompleks.",
-      impact:
-        "Platform edukasi yang stabil dengan fitur real-time untuk pembelajaran.",
-    },
-    {
-      title: "Sweet Treats App",
-      description:
-        "Aplikasi full-stack untuk toko kue dengan frontend dan backend terintegrasi.",
-      image: "/projects/sweet-treats.jpg",
-      technologies: ["dart", "Express.js", "MSQL"],
-      category: "Full Stack",
-      githubLink: "https://github.com/username/sweet-treats",
-      status: "completed",
-      duration: "5 bulan",
-      teamSize: "2 developers",
-      highlights: [
-        "E-commerce functionality",
-        "Payment integration",
-        "Image upload",
-        "Admin dashboard",
-      ],
-      challenges:
-        "Integrasi payment gateway dan optimasi performa untuk handling banyak produk.",
-      impact:
-        "Aplikasi e-commerce yang fungsional dengan sistem pembayaran yang aman.",
-    },
-    {
-      title: "Project Bumdesa Backend",
-      description: "Backend API untuk sistem manajemen Badan Usaha Milik Desa.",
-      image: "/projects/bumdesa.jpg",
-      technologies: ["Express.js", "Node.js", "MSQL", "JWT", "Multer"],
-      category: "Backend API",
-      githubLink: "https://github.com/username/bumdesa-backend",
-      status: "completed",
-      duration: "3 bulan",
-      teamSize: "4 developers",
-      highlights: [
-        "CRUD operations",
-        "File management",
-        "User roles",
-        "Data reporting",
-      ],
-      challenges:
-        "Mendesain struktur database yang efisien untuk data BUMDesa yang kompleks.",
-      impact:
-        "Sistem backend yang mendukung operasional BUMDesa secara digital.",
-    },
-    {
-      title: "JobCom (Frontend)",
-      description:
-        "Frontend aplikasi untuk platform pencarian kerja dan recruitment.",
-      image: "/projects/jobcom.jpg",
-      technologies: ["Dart", "Flutter", "Redux", "Material-UI", "Axios"],
-      category: "Frontend",
-      githubLink: "https://github.com/username/jobcom-frontend",
-      status: "completed",
-      duration: "4 bulan",
-      teamSize: "1 developer",
-      highlights: [
-        "Responsive design",
-        "State management",
-        "Component library",
-        "API integration",
-      ],
-      challenges:
-        "Membuat UI yang user-friendly untuk berbagai jenis pengguna (job seeker & employer).",
-      impact:
-        "Interface yang intuitif untuk platform job matching yang efisien.",
-    },
-    {
-      title: "H5 Revolution",
-      description:
-        "Aplikasi web untuk grup idola H5-Revolution dengan fitur fan engagement dan konten eksklusif.",
-      image: "/projects/h5-revolution.jpg",
-      technologies: ["React", "Node.js", "MongoDB", "Stripe", "AWS"],
-      category: "Idol Group Web App",
-      githubLink: "https://github.com/username/h5-revolution",
-      status: "completed",
-      duration: "6 bulan",
-      teamSize: "1 developer",
-      highlights: [
-        "Fan community platform",
-        "Live streaming integration",
-        "Merchandise store",
-        "Member profiles",
-        "Event calendar",
-      ],
-      challenges:
-        "Membangun platform yang engaging untuk fans dengan fitur real-time dan sistem membership.",
-      impact:
-        "Aplikasi web yang berhasil menghubungkan grup idola H5-Revolution dengan fans mereka secara digital.",
-    },
-    {
-      title: "H5 Official Store",
-      description:
-        "Website toko online resmi untuk menjual merchandise grup idola H5-Revolution.",
-      image: "/projects/h5-store.jpg",
-      technologies: ["Next.js", "Node.js", "Stripe", "AWS S3", "PostgreSQL"],
-      category: "Idol Merchandise Store",
-      githubLink: "https://github.com/username/h5-official-store",
-      status: "completed",
-      duration: "4 bulan",
-      teamSize: "1 developer",
-      highlights: [
-        "Official merchandise",
-        "Payment processing",
-        "Product gallery",
-        "Order tracking",
-        "Fan reviews",
-      ],
-      challenges:
-        "Mengelola inventory merchandise yang beragam dan sistem pembayaran yang aman untuk fans.",
-      impact:
-        "Toko online resmi yang berhasil menyediakan merchandise berkualitas untuk fans H5-Revolution.",
-    },
-    {
-      title: "SIMA BPJS API",
-      description:
-        "API untuk integrasi sistem informasi manajemen dengan BPJS Kesehatan.",
-      image: "/projects/sima-bpjs.jpg",
-      technologies: ["ASP.net", "Node.js", "Oracle DB", "SOAP", "XML"],
-      category: "Integration API",
-      githubLink: "https://github.com/username/sima-bpjs-api",
-      status: "completed",
-      duration: "3 bulan",
-      teamSize: "3 developers",
-      highlights: [
-        "BPJS integration",
-        "SOAP services",
-        "Data synchronization",
-        "Error handling",
-      ],
-      challenges:
-        "Integrasi dengan sistem BPJS yang kompleks dan handling data sensitive.",
-      impact:
-        "API yang memungkinkan sistem rumah sakit terintegrasi dengan BPJS Kesehatan.",
-    },
-  ];
+  // Localized projects from centralized store
+  const localizedProjects = useMemo(() =>
+    projects.map((p) => ({
+      ...p,
+      description: language === "en" ? p.description_en : p.description_id,
+      duration: language === "en" ? p.duration_en : p.duration_id,
+    })),
+    [language]
+  );
 
-  // Skills data aligned with /skills page
-  const technicalSkills = [
-    {
-      title: "Pengembangan Aplikasi Web & Mobile",
-      description: "Membangun aplikasi responsif dengan teknologi modern untuk web dan mobile",
-    },
-    {
-      title: "Desain dan Arsitektur Perangkat Lunak",
-      description: "Merancang struktur sistem yang scalable, maintainable, dan efisien",
-    },
-    {
-      title: "Database Management System",
-      description: "Mengelola dan mengoptimalkan basis data untuk performa terbaik",
-    },
-    {
-      title: "RESTful API & Integrasi Sistem",
-      description: "Membangun API dan mengintegrasikan berbagai sistem dengan standar terbaik",
-    },
-  ];
+  // Localized skills
+  const localizedTechnical = useMemo(() =>
+    technicalSkills.map((s) => ({
+      ...s,
+      title: language === "en" ? s.title_en : s.title_id,
+      description: language === "en" ? s.description_en : s.description_id,
+    })),
+    [language]
+  );
 
-  const nonTechnicalSkills = [
-    {
-      title: "Pemecahan Masalah & Analisis",
-      description: "Menganalisis masalah kompleks dan menemukan solusi efektif",
-    },
-    {
-      title: "Manajemen Waktu",
-      description: "Mengatur prioritas dan menyelesaikan tugas tepat waktu",
-    },
-    {
-      title: "Kolaborasi & Kerja Tim",
-      description: "Berkontribusi aktif dalam tim dengan komunikasi yang efektif",
-    },
-    {
-      title: "Disiplin & Tanggung Jawab",
-      description: "Menjaga komitmen dan bertanggung jawab atas tugas yang diberikan",
-    },
-  ];
+  const localizedNonTechnical = useMemo(() =>
+    nonTechnicalSkills.map((s) => ({
+      ...s,
+      title: language === "en" ? s.title_en : s.title_id,
+      description: language === "en" ? s.description_en : s.description_id,
+    })),
+    [language]
+  );
 
-  const languages = [
-    { name: "JAVASCRIPT", level: 62, icon: "/icons/javascript-icon.png" },
-    { name: "TYPESCRIPT", level: 58, icon: "/icons/typescript-icon.png" },
-    { name: "DART", level: 55, icon: "/icons/dart-icon.png" },
-    { name: "PHP", level: 60, icon: "/icons/php-icon.png" },
-    { name: "C++", level: 50 },
-    { name: "GO", level: 57, icon: "/icons/golang-icon.png" },
-    { name: "HTML5", level: 65, icon: "/icons/html5-icon.png" },
-    { name: "CSS3", level: 63, icon: "/icons/css3-icon.png" },
-  ];
+  // Central data alias (replace local duplicate variables)
+  const languages = programmingLanguages;
 
-  const frameworks = [
-    { name: "REACT", level: 60 },
-    { name: "NEXT.JS", level: 58 },
-    { name: "ANGULAR", level: 50 },
-    { name: "FLUTTER", level: 60, icon: "/icons/flutter-icon.png" },
-    { name: "LARAVEL", level: 55, icon: "/icons/laravel-icon.png" },
-    { name: "EXPRESS.JS", level: 60, icon: "/icons/expressjs-icon.png" },
-    { name: "NODE.JS", level: 62, icon: "/icons/nodejs-icon.png" },
-    { name: "TAILWIND", level: 63 },
-    { name: "ASP.NET", level: 45 },
-  ];
-
-  const tools = [
-    { name: "FIREBASE", level: 60, icon: "/icons/firebase-icon.png" },
-    { name: "DOCKER", level: 55 },
-    { name: "MYSQL", level: 58, icon: "/icons/mysql-icon.png" },
-    { name: "GIT", level: 65, icon: "/icons/git-icon.png" },
-    { name: "FIGMA", level: 55, icon: "/icons/figma-icon.png" },
-    { name: "CANVA", level: 60, icon: "/icons/canva-icon.png" },
-    { name: "POSTMAN", level: 62, icon: "/icons/postman-icon.png" },
-    { name: "VERCEL", level: 50 },
-  ];
-
-  // Certificates data aligned with /certificates page
-  const certificates = [
-    {
-      title: "Belajar Dasar Bahasa Pemrograman dengan Python",
-      issuer: "Mounev Academy",
-      image: "/certificates/python-mounev.png",
-      category: "Programming",
-      year: "2024",
-    },
-    {
-      title:
-        "Engineering Resilience: Microservices' Contribution to High Scalability in Tech Company",
-      issuer: "Tech Company",
-      image: "/certificates/microservices.png",
-      category: "Architecture",
-      year: "2024",
-    },
-    {
-      title: "CCNA: Introduction to Networks",
-      issuer: "Cisco Networking Academy",
-      image: "/certificates/ccna.png",
-      category: "Networking",
-      year: "2023",
-    },
-    {
-      title: "Prinsip Dasar UI/UX Designer",
-      issuer: "Eduwork",
-      image: "/certificates/ui-ux-eduwork.png",
-      category: "Design",
-      year: "2024",
-    },
-  ];
+  // Certificates already imported from centralized store
 
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -419,7 +156,7 @@ export default function Home() {
         >
           <motion.div className="mb-8 sm:mb-12" variants={itemVariants}>
             <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 font-light leading-relaxed">
-              Mahasiswa Teknik Informatika | Backend & Mobile Developer
+              {t.hero.subtitle} <span className="text-cyan-400 font-semibold">{t.hero.backend}</span> & <span className="text-blue-400 font-semibold">{t.hero.mobile}</span>
             </h2>
           </motion.div>
 
@@ -456,7 +193,7 @@ export default function Home() {
                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                Download CV
+                {t.hero.downloadCv}
               </span>
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
             </motion.button>
@@ -481,7 +218,7 @@ export default function Home() {
                     d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                Contact Me
+                {t.hero.contactMe}
               </span>
             </motion.button>
 
@@ -505,7 +242,7 @@ export default function Home() {
                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                   />
                 </svg>
-                View Projects
+                {t.hero.viewProjects}
               </span>
             </motion.button>
           </motion.div>
@@ -521,7 +258,7 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push("/about")}
             >
-              About
+              {t.nav.about}
             </motion.button>
             <motion.button
               className="px-5 py-2 rounded-full border border-white/20 text-gray-200 hover:bg-white/10 transition-all"
@@ -529,7 +266,7 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push("/certificates")}
             >
-              Certificates
+              {t.nav.certificates}
             </motion.button>
             <motion.button
               className="px-5 py-2 rounded-full border border-white/20 text-gray-200 hover:bg-white/10 transition-all"
@@ -537,7 +274,7 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               onClick={() => router.push("/skills")}
             >
-              Skills
+              {t.nav.skills}
             </motion.button>
           </motion.div>
 
@@ -546,7 +283,7 @@ export default function Home() {
             variants={itemVariants}
           >
             <p className="text-gray-400 text-xs sm:text-sm mb-2 px-4 text-center">
-              Scroll untuk melihat lebih banyak
+              {t.common.scrollDown}
             </p>
             <motion.div
               className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-gray-400 rounded-full flex justify-center"
@@ -575,7 +312,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Selamat Datang di Portofolio Saya
+            {language === "en" ? "Welcome to My Portfolio" : "Selamat Datang di Portofolio Saya"}
           </motion.h1>
           <motion.p
             className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed px-4"
@@ -584,8 +321,9 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            Di sini Anda dapat menemukan informasi tentang keahlian, proyek,
-            sertifikat, dan cara menghubungi saya.
+            {language === "en"
+              ? "Here you can find information about my skills, projects, certificates, and how to contact me."
+              : "Di sini Anda dapat menemukan informasi tentang keahlian, proyek, sertifikat, dan cara menghubungi saya."}
           </motion.p>
         </div>
       </motion.section>
@@ -611,7 +349,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Tentang Saya
+            {t.about.title}
           </motion.h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mt-12">
@@ -622,22 +360,13 @@ export default function Home() {
               viewport={{ once: true }}
             >
               <h3 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                Mahasiswa Bersemangat di Bidang Teknologi
+                {t.about.subtitle}
               </h3>
               <p className="text-gray-300 mb-4 leading-relaxed">
-                Saya adalah mahasiswa Teknik Informatika yang passionate tentang
-                pengembangan backend dan mobile. Dengan keahlian di berbagai
-                teknologi modern, saya siap menghadapi tantangan di industri
-                teknologi.
-              </p>
-              <p className="text-gray-300 mb-4 leading-relaxed">
-                Saya percaya bahwa belajar adalah proses berkelanjutan. Setiap
-                proyek adalah kesempatan untuk meningkatkan skills dan
-                memberikan nilai terbaik.
+                {t.about.desc1}
               </p>
               <p className="text-gray-300 leading-relaxed">
-                Ketika tidak coding, saya menyukai berbagi pengetahuan dan
-                berkontribusi pada komunitas tech lokal.
+                {t.about.desc2}
               </p>
             </motion.div>
 
@@ -714,7 +443,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Keahlian Saya
+            {language === "en" ? "Keahlian Saya" : "Keahlian Saya"}
           </motion.h2>
           <motion.p
             className="text-gray-400 text-center text-lg mb-12"
@@ -723,60 +452,48 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Teknologi dan tools yang saya kuasai
+            {language === "en" ? "Technologies and tools I master" : "Teknologi dan tools yang saya kuasai"}
           </motion.p>
 
-          {/* Technical & Non-Technical Skills */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-br from-gray-800 to-gray-700 p-6 md:p-8 rounded-lg border border-gray-700"
-            >
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-6">Keahlian Teknis</h3>
-              <div className="space-y-4">
-                {technicalSkills.map((item, idx) => (
-                  <div key={idx} className="p-4 rounded-lg bg-gray-800/50 border border-gray-700">
-                    <p className="text-white font-medium mb-1">{item.title}</p>
-                    <p className="text-gray-400 text-sm">{item.description}</p>
-                  </div>
-                ))}
+          {/* Technical & Non-Technical Skills Carousel */}
+          <div className="mb-12">
+            <AutoCarousel itemsCount={2} desktopItems={2} tabletItems={2} mobileItems={1} interval={5000}>
+              {/* Technical Skills */}
+              <div className="w-full min-w-[100%] md:min-w-[calc(50%-0.75rem)] shrink-0 bg-gradient-to-br from-gray-800 to-gray-700 p-6 md:p-8 rounded-lg border border-gray-700 flex flex-col h-full">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-6">{t.skills.technical}</h3>
+                <div className="space-y-4 flex-1">
+                  {localizedTechnical.map((item, idx) => (
+                    <div key={idx} className="p-4 rounded-lg bg-gray-800/50 border border-gray-700 hover:border-cyan-500/50 transition-colors">
+                      <p className="text-white font-medium mb-1">{item.title}</p>
+                      <p className="text-gray-400 text-sm">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="bg-gradient-to-br from-gray-800 to-gray-700 p-6 md:p-8 rounded-lg border border-gray-700"
-            >
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-6">Keahlian Non-Teknis</h3>
-              <div className="space-y-4">
-                {nonTechnicalSkills.map((item, idx) => (
-                  <div key={idx} className="p-4 rounded-lg bg-gray-800/50 border border-gray-700">
-                    <p className="text-white font-medium mb-1">{item.title}</p>
-                    <p className="text-gray-400 text-sm">{item.description}</p>
-                  </div>
-                ))}
+              {/* Non-Technical Skills */}
+              <div className="w-full min-w-[100%] md:min-w-[calc(50%-0.75rem)] shrink-0 bg-gradient-to-br from-gray-800 to-gray-700 p-6 md:p-8 rounded-lg border border-gray-700 flex flex-col h-full">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-6">{t.skills.nonTechnical}</h3>
+                <div className="space-y-4 flex-1">
+                  {localizedNonTechnical.map((item, idx) => (
+                    <div key={idx} className="p-4 rounded-lg bg-gray-800/50 border border-gray-700 hover:border-cyan-500/50 transition-colors">
+                      <p className="text-white font-medium mb-1">{item.title}</p>
+                      <p className="text-gray-400 text-sm">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </motion.div>
+            </AutoCarousel>
           </div>
 
           {/* Languages */}
           <div className="mb-12">
             <h3 className="text-2xl font-bold text-white mb-6 text-center">Programming Languages</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AutoCarousel itemsCount={languages.length} desktopItems={3} tabletItems={2} mobileItems={1} interval={4000}>
               {languages.map((lang, idx) => (
-                <motion.div
+                <div
                   key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  viewport={{ once: true }}
-                  className="bg-gradient-to-br from-gray-800 to-gray-700 p-5 rounded-lg border border-gray-700"
+                  className="w-full min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] shrink-0 bg-gradient-to-br from-gray-800 to-gray-700 p-5 rounded-lg border border-gray-700 hover:border-cyan-500/50 transition-colors"
                 >
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
@@ -789,30 +506,26 @@ export default function Home() {
                   </div>
                   <div className="w-full bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
                       initial={{ width: 0 }}
                       whileInView={{ width: `${lang.level}%` }}
                       transition={{ duration: 0.8 }}
                       viewport={{ once: true }}
                     />
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </div>
+            </AutoCarousel>
           </div>
 
           {/* Frameworks & Libraries */}
           <div className="mb-12">
             <h3 className="text-2xl font-bold text-white mb-6 text-center">Frameworks & Libraries</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <AutoCarousel itemsCount={frameworks.length} desktopItems={3} tabletItems={2} mobileItems={1} interval={4500}>
               {frameworks.map((fw, idx) => (
-                <motion.div
+                <div
                   key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  viewport={{ once: true }}
-                  className="bg-gradient-to-br from-gray-800 to-gray-700 p-5 rounded-lg border border-gray-700"
+                  className="w-full min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] shrink-0 bg-gradient-to-br from-gray-800 to-gray-700 p-5 rounded-lg border border-gray-700 hover:border-blue-500/50 transition-colors"
                 >
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
@@ -825,30 +538,26 @@ export default function Home() {
                   </div>
                   <div className="w-full bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                      className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
                       initial={{ width: 0 }}
                       whileInView={{ width: `${fw.level}%` }}
                       transition={{ duration: 0.8 }}
                       viewport={{ once: true }}
                     />
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </div>
+            </AutoCarousel>
           </div>
 
           {/* Tools & Platforms */}
           <div>
-            <h3 className="text-2xl font-bold text-white mb-6 text-center">Tools & Platforms</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center">{language === "en" ? "Tools & Platforms" : "Tools & Platforms"}</h3>
+            <AutoCarousel itemsCount={tools.length} desktopItems={3} tabletItems={2} mobileItems={1} interval={5000}>
               {tools.map((tool, idx) => (
-                <motion.div
+                <div
                   key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  viewport={{ once: true }}
-                  className="bg-gradient-to-br from-gray-800 to-gray-700 p-5 rounded-lg border border-gray-700"
+                  className="w-full min-w-[100%] md:min-w-[calc(50%-0.75rem)] lg:min-w-[calc(33.333%-1rem)] shrink-0 bg-gradient-to-br from-gray-800 to-gray-700 p-5 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-colors"
                 >
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
@@ -861,16 +570,102 @@ export default function Home() {
                   </div>
                   <div className="w-full bg-gray-600 rounded-full h-2 overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-green-500 to-cyan-500"
+                      className="h-full bg-gradient-to-r from-blue-400 to-purple-500"
                       initial={{ width: 0 }}
                       whileInView={{ width: `${tool.level}%` }}
                       transition={{ duration: 0.8 }}
                       viewport={{ once: true }}
                     />
                   </div>
-                </motion.div>
+                </div>
               ))}
+            </AutoCarousel>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* CASE STUDIES SECTION */}
+      <motion.section
+        id="case-studies"
+        className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 relative overflow-hidden"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div className="text-left">
+              <motion.h2
+                className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4"
+                initial={{ x: -30, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                {t.caseStudies.title}
+              </motion.h2>
+              <motion.p
+                className="text-gray-400 text-lg max-w-xl"
+                initial={{ x: -30, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+              >
+                {t.caseStudies.subtitle}
+              </motion.p>
             </div>
+            <motion.button
+              onClick={() => router.push("/case-studies")}
+              className="px-6 py-3 rounded-full border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 transition-all font-bold text-sm whitespace-nowrap"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {language === "en" ? "View All Case Studies" : "Lihat Semua Studi Kasus"}
+            </motion.button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {caseStudies.slice(0, 3).map((cs, index) => {
+              const project = projects.find(p => p.id === cs.projectId);
+              if (!project) return null;
+              return (
+                <motion.div
+                  key={cs.projectId}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ y: -10 }}
+                  className="group bg-white/5 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/10 hover:border-cyan-500/50 transition-all"
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    <Image 
+                      src={project.image} 
+                      alt={project.title} 
+                      fill 
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-950 to-transparent" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors">{project.title}</h3>
+                    <p className="text-gray-400 text-sm line-clamp-2 mb-6">
+                      {language === "en" ? cs.overview_en : cs.overview_id}
+                    </p>
+                    <Link 
+                      href={`/projects/${cs.projectId}`} 
+                      className="inline-flex items-center gap-2 text-cyan-400 text-sm font-bold group/btn"
+                    >
+                      {t.caseStudies.readMore}
+                      <svg className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </Link>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </motion.section>
@@ -896,7 +691,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Proyek Saya
+            {t.projects.title}
           </motion.h2>
           <motion.p
             className="text-gray-300 text-center text-lg mb-12"
@@ -905,13 +700,17 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Kumpulan proyek yang telah saya kerjakan
+            {t.projects.subtitle}
           </motion.p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
+          <div>
+            <AutoCarousel itemsCount={localizedProjects.length} desktopItems={2} tabletItems={2} mobileItems={1} interval={5000}>
+              {localizedProjects.map((project, index) => (
+                <div key={index} className="w-full min-w-[100%] md:min-w-[calc(50%-0.75rem)] shrink-0">
+                  <ProjectCard {...project} />
+                </div>
+              ))}
+            </AutoCarousel>
           </div>
         </div>
       </motion.section>
@@ -933,7 +732,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Sertifikat & Penghargaan
+            {t.certificates.title}
           </motion.h2>
           <motion.p
             className="text-gray-400 text-center text-lg mb-12"
@@ -942,12 +741,12 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Sertifikasi profesional yang telah saya raih
+            {t.certificates.subtitle}
           </motion.p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {certificates.map((cert, idx) => (
-              <CertificateCard key={idx} title={cert.title} issuer={cert.issuer} image={cert.image} />
+              <CertificateCard key={idx} title={language === "en" ? cert.title_en : cert.title} issuer={cert.issuer} image={cert.image} />
             ))}
           </div>
         </div>
@@ -974,7 +773,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            Hubungi Saya
+            {t.contact.title}
           </motion.h2>
           <motion.p
             className="text-gray-300 text-center text-lg mb-12"
@@ -983,7 +782,7 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            Mari kita diskusikan proyek atau peluang kolaborasi Anda
+            {t.contact.subtitle}
           </motion.p>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
@@ -996,7 +795,7 @@ export default function Home() {
               className="lg:col-span-1"
             >
               <h3 className="text-2xl md:text-3xl font-bold text-white mb-8">
-                Informasi Kontak
+                {t.contact.infoTitle}
               </h3>
 
               <div className="space-y-6">
@@ -1047,7 +846,7 @@ export default function Home() {
               {/* Social Links */}
               <div className="mt-8 pt-8 border-t border-gray-700">
                 <h4 className="text-lg font-bold text-white mb-4">
-                  Ikuti Saya
+                  {t.contact.followMe}
                 </h4>
                 <div className="flex gap-4">
                   {[
@@ -1082,7 +881,7 @@ export default function Home() {
             >
               <div className="bg-gradient-to-br from-gray-800 to-gray-700 p-8 md:p-10 rounded-lg border border-gray-700">
                 <h3 className="text-2xl md:text-3xl font-bold text-white mb-8">
-                  Kirim Pesan
+                  {t.contact.sendMessage}
                 </h3>
 
                 {submitted ? (
@@ -1107,11 +906,10 @@ export default function Home() {
                       </svg>
                     </div>
                     <h4 className="text-xl font-bold text-white mb-2">
-                      Terima Kasih!
+                      {t.contact.successTitle}
                     </h4>
                     <p className="text-gray-300 text-center">
-                      Pesan Anda telah terkirim. Saya akan menghubungi Anda
-                      segera.
+                      {t.contact.successDesc}
                     </p>
                   </motion.div>
                 ) : (
@@ -1124,7 +922,7 @@ export default function Home() {
                       viewport={{ once: true }}
                     >
                       <label className="block text-gray-200 font-medium mb-2">
-                        Nama Lengkap
+                        {t.contact.nameLabel}
                       </label>
                       <input
                         type="text"
@@ -1132,8 +930,8 @@ export default function Home() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        placeholder="Nama Anda"
+                        className="w-full px-4 py-3 rounded-xl bg-gray-900/40 backdrop-blur-md text-white border border-white/10 placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] focus:outline-none transition-all duration-300"
+                        placeholder={t.contact.namePlaceholder}
                       />
                     </motion.div>
 
@@ -1145,7 +943,7 @@ export default function Home() {
                       viewport={{ once: true }}
                     >
                       <label className="block text-gray-200 font-medium mb-2">
-                        Email
+                        {t.contact.emailLabel}
                       </label>
                       <input
                         type="email"
@@ -1153,8 +951,8 @@ export default function Home() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        placeholder="email@example.com"
+                        className="w-full px-4 py-3 rounded-xl bg-gray-900/40 backdrop-blur-md text-white border border-white/10 placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] focus:outline-none transition-all duration-300"
+                        placeholder={t.contact.emailPlaceholder}
                       />
                     </motion.div>
 
@@ -1166,7 +964,7 @@ export default function Home() {
                       viewport={{ once: true }}
                     >
                       <label className="block text-gray-200 font-medium mb-2">
-                        Subject
+                        {t.contact.subjectLabel}
                       </label>
                       <input
                         type="text"
@@ -1174,8 +972,8 @@ export default function Home() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-                        placeholder="Subjek pesan"
+                        className="w-full px-4 py-3 rounded-xl bg-gray-900/40 backdrop-blur-md text-white border border-white/10 placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] focus:outline-none transition-all duration-300"
+                        placeholder={t.contact.subjectPlaceholder}
                       />
                     </motion.div>
 
@@ -1187,7 +985,7 @@ export default function Home() {
                       viewport={{ once: true }}
                     >
                       <label className="block text-gray-200 font-medium mb-2">
-                        Pesan
+                        {t.contact.messageLabel}
                       </label>
                       <textarea
                         name="message"
@@ -1195,8 +993,8 @@ export default function Home() {
                         onChange={handleChange}
                         required
                         rows="5"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
-                        placeholder="Tulis pesan Anda di sini..."
+                        className="w-full px-4 py-3 rounded-xl bg-gray-900/40 backdrop-blur-md text-white border border-white/10 placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 focus:shadow-[0_0_15px_rgba(34,211,238,0.3)] focus:outline-none transition-all duration-300 resize-none"
+                        placeholder={t.contact.messagePlaceholder}
                       />
                     </motion.div>
 
@@ -1209,7 +1007,7 @@ export default function Home() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       type="submit"
-                      className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group"
+                      className="w-full px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold tracking-wide rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:from-cyan-500 hover:to-blue-500 hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-2">
                         <svg
@@ -1225,7 +1023,7 @@ export default function Home() {
                             d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                           />
                         </svg>
-                        Kirim Pesan
+                        {t.contact.sendButton}
                       </span>
                       <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
                     </motion.button>

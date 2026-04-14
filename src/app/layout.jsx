@@ -5,6 +5,8 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { Inter, Roboto_Mono, Space_Mono, JetBrains_Mono } from "next/font/google";
 import PageTransition from "@/components/PageTransition";
 import TechBackdrop from "@/components/TechBackdrop";
+import Particles from "@/components/Particles";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -57,8 +59,12 @@ export default function RootLayout({ children }) {
     <html
       lang="id"
       className={`${inter.variable} ${robotoMono.variable} ${spaceMono.variable} ${jetbrainsMono.variable} scroll-smooth`}
+      suppressHydrationWarning
     >
-      <body className="relative bg-black text-slate-100 antialiased overflow-x-hidden selection:bg-cyan-500/40 selection:text-cyan-100 min-h-screen flex flex-col">
+      <body 
+        className="relative bg-black text-slate-100 antialiased overflow-x-hidden selection:bg-cyan-500/40 selection:text-cyan-100 min-h-screen flex flex-col"
+        suppressHydrationWarning
+      >
         
         {/* ===== BACKGROUND LAYERS ===== */}
         <div className="fixed inset-0 z-0 pointer-events-none">
@@ -112,6 +118,8 @@ export default function RootLayout({ children }) {
             <line x1="85%" y1="0" x2="85%" y2="100%" stroke="url(#line-grad2)" strokeWidth="2" opacity="0.25" />
           </svg>
 
+          <TechBackdrop />
+
           {/* Floating code snippets */}
           <div className="absolute top-20 left-10 text-cyan-500/30 font-mono text-xs opacity-0 animate-float-code" style={{
             animation: "float-code 8s ease-in-out infinite",
@@ -139,20 +147,7 @@ export default function RootLayout({ children }) {
           </div>
 
           {/* Particles */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(15)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-50"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animation: `particle-float ${3 + Math.random() * 4}s ease-in-out infinite`,
-                  animationDelay: `${Math.random() * 2}s`
-                }}
-              />
-            ))}
-          </div>
+          <Particles />
         </div>
 
         {/* ===== SKIP TO CONTENT LINK ===== */}
@@ -163,6 +158,7 @@ export default function RootLayout({ children }) {
           Lompat ke konten utama
         </a>
 
+        <LanguageProvider>
         {/* ===== HEADER ===== */}
         <header className="sticky top-0 z-40 backdrop-blur-2xl border-b border-cyan-500/20 shadow-2xl" style={{
           backgroundImage: "linear-gradient(135deg, rgba(6,182,212,0.05) 0%, rgba(3,102,214,0.05) 100%)",
@@ -185,12 +181,11 @@ export default function RootLayout({ children }) {
               <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl from-blue-500/10 via-blue-500/5 to-transparent blur-2xl rounded-full" />
             </div>
 
-            {/* Content wrapper */}
-            <div className="relative z-10">
-              <PageTransition>
-            {children}
-              </PageTransition>
-            </div>
+              <div className="relative z-10">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+              </div>
           </div>
         </main>
 
@@ -206,6 +201,7 @@ export default function RootLayout({ children }) {
 
         {/* ===== SCROLL TO TOP ===== */}
         <ScrollToTop />
+        </LanguageProvider>
 
         {/* global styles moved to globals.css to avoid styled-jsx in server layout */}
       </body>
